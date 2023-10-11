@@ -19,26 +19,28 @@ createApp({
   data() {
     return {
       id: 'a',
-      post: null,
-      error: null
+      postResponse: null
     };
+  },
+  computed: {
+    post() { return this.postResponse?.data },
+    error() { return this.postResponse?.error }
   },
   methods: {
     async getPost(id) {
       try {
-        this.error = null;
-        this.post = null;
+        this.postResponse = null;
         const url = new URL(id, "https://jsonplaceholder.typicode.com/posts/");
         const response = await fetch(url);
         if (response.ok) {
           /** @type {Post} */
           const json = await response.json();
-          this.post = json;
+          this.postResponse = { data: json };
         } else {
-          this.error = `Couldn't load post. Response: ${response.status} ${response.statusText}`;
+          this.postResponse = { error: `Couldn't load post. Response: ${response.status} ${response.statusText}` };
         }
       } catch (e) {
-        this.error = e;
+        this.postResponse = { error: e };
       }
     }
   },
